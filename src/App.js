@@ -1,3 +1,4 @@
+/* eslint react/prop-types: 0 */
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import m3u8Parser from 'm3u8-file-parser'
@@ -70,12 +71,14 @@ function App() {
         {channels &&
           channels.map((channel) => {
             return (
-              <div>
+              <div key={JSON.stringify(channel.inf)}>
                 {channel.inf &&
                   channel.inf.title &&
                   channel.inf.title.length < 50 && [
-                    <ChannelImage channel={channel} />,
-                    <p className="px-4p-4">{channel.inf && channel.inf.title}</p>,
+                    <ChannelImage channel={channel} key={1} />,
+                    <p className="px-4p-4" key={2}>
+                      {channel.inf && channel.inf.title}
+                    </p>,
                   ]}
               </div>
             )
