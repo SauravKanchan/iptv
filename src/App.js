@@ -5,31 +5,38 @@ import m3u8Parser from 'm3u8-file-parser'
 import './App.css'
 import brokenImg from './img/brokenimage.png'
 import fuzzysort from 'fuzzysort';
+import Player from './components/Player'
 
-let channels_raw = [];
-
-const ChannelImage = ({ channel }) => {
-  const [source, setSource] = useState(channel.tvgLogo);
-  return (
-    <img
-      className="h-32 m-2 rounded shadow max-w-32"
-      src={source}
-      alt="channel-logo"
-      onError={() => setSource(brokenImg)}
-    />
-  )
-};
+  let channels_raw = [];
 
 
 function App() {
-  const [channels, setChannels] = useState([])
+
+  const [channels, setChannels] = useState([]);
+  const [url, setUrl] = useState();
+
+
+  const ChannelImage = ({ channel }) => {
+    const [source, setSource] = useState(channel.tvgLogo);
+    return (
+      <img
+        className="h-32 m-2 rounded shadow max-w-32"
+        src={source}
+        alt="channel-logo"
+        onClick={() => setUrl(channel.url)}
+        onError={() => setSource(brokenImg)}
+      />
+    );
+  };
+
+
 
   async function search(event) {
     let filtered_channels = [];
     let result = await fuzzysort.goAsync(event.target.value, channels_raw, {
       limit: 15,
       key: "title",
-      allowTypo: false
+      allowTypo: false,
     });
     result.forEach((d) => {
       filtered_channels.push(d.obj);
@@ -37,6 +44,7 @@ function App() {
     setChannels(filtered_channels);
   }
 
+  
   useEffect(() => {
     const fetchChannels = async () => {
       let res = await axios.get('https://raw.githubusercontent.com/billacablewala/m3u8/master/README.md')
@@ -91,23 +99,24 @@ function App() {
           onChange={search}
         />
       </div>
+      {url && <Player url={url} />}
       <div className="flex flex-wrap justify-between">
         {channels &&
           channels.map((channel) => {
             return (
               <div key={JSON.stringify(channel)}>
                 {[
-                    <ChannelImage channel={channel} key={1} />,
-                    <p className="px-4p-4" key={2}>
-                      {channel.title}
-                    </p>,
+                  <ChannelImage channel={channel} key={1} />,
+                  <p className="px-4p-4" key={2}>
+                    {channel.title}
+                  </p>,
                 ]}
               </div>
-            )
+            );
           })}
       </div>
     </div>
-  )
+  );
 }
 
 export default App
