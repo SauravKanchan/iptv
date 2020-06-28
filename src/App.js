@@ -42,13 +42,12 @@ function App() {
       <div className="flex flex-wrap justify-between">
         {channels &&
           channels.map((channel) => {
-            console.log(channel)
             return (
               <div>
                 <img
                   className="h-32 p-4 m-2 rounded shadow"
-                  src={channel.inf && channel.inf.tvgLogo}
-                  alt="channel-logo"
+                  src={channel.inf && (channel.inf.tvgLogo || channel.inf.logo)}
+                  alt={channel.inf && channel.inf.title}
                 />
                 <p className="px-4">{channel.inf && channel.inf.title}</p>
               </div>
