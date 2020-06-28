@@ -4,9 +4,12 @@ import axios from 'axios'
 import m3u8Parser from 'm3u8-file-parser'
 import './App.css'
 import brokenImg from './img/brokenimage.png'
+import fuzzysort from 'fuzzysort';
+
+let channels_raw = [];
 
 const ChannelImage = ({ channel }) => {
-  const [source, setSource] = useState(channel.inf && (channel.inf.tvgLogo || channel.inf.logo))
+  const [source, setSource] = useState(channel.tvgLogo);
   return (
     <img
       className="h-32 m-2 rounded shadow max-w-32"
@@ -15,14 +18,25 @@ const ChannelImage = ({ channel }) => {
       onError={() => setSource(brokenImg)}
     />
   )
-}
+};
 
-function search(event) {
-  console.log(event.target.value);
-}
 
 function App() {
   const [channels, setChannels] = useState([])
+
+  async function search(event) {
+    let filtered_channels = [];
+    let result = await fuzzysort.goAsync(event.target.value, channels_raw, {
+      limit: 15,
+      key: "title",
+      allowTypo: false
+    });
+    result.forEach((d) => {
+      filtered_channels.push(d.obj);
+    });
+    setChannels(filtered_channels);
+  }
+
   useEffect(() => {
     const fetchChannels = async () => {
       let res = await axios.get('https://raw.githubusercontent.com/billacablewala/m3u8/master/README.md')
@@ -46,14 +60,19 @@ function App() {
           console.log('Error in reading url')
         }
       })
-      setChannels(reader.getResult().segments)
       let parsed = reader.getResult().segments
+      
       parsed.forEach((d) => {
-        if (!(d.inf && (d.inf.tvgLogo || d.inf.logo))) {
-          console.log(d)
-        }
+          let temp = { ...d.inf }
+          temp.url = d.url
+          channels_raw.push(temp);
       })
-    }
+
+    
+      setChannels(channels_raw);
+
+      
+    };
     try {
       fetchChannels()
     } catch (error) {
@@ -76,15 +95,13 @@ function App() {
         {channels &&
           channels.map((channel) => {
             return (
-              <div key={JSON.stringify(channel.inf)}>
-                {channel.inf &&
-                  channel.inf.title &&
-                  channel.inf.title.length < 50 && [
+              <div key={JSON.stringify(channel)}>
+                {[
                     <ChannelImage channel={channel} key={1} />,
                     <p className="px-4p-4" key={2}>
-                      {channel.inf && channel.inf.title}
+                      {channel.title}
                     </p>,
-                  ]}
+                ]}
               </div>
             )
           })}
