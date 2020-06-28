@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import m3u8Parser from 'm3u8-file-parser'
 import './App.css'
+import brokenImg from './img/brokenimage.png'
 
+const ChannelImage = ({ channel }) => {
+  const [source, setSource] = useState(channel.inf && channel.inf.tvgLogo)
+  return (
+    <img className="h-32 m-2 rounded shadow" src={source} alt="channel-logo" onError={() => setSource(brokenImg)} />
+  )
+}
 function App() {
   const [channels, setChannels] = useState([])
   useEffect(() => {
@@ -38,18 +45,22 @@ function App() {
   }, []);
   return (
     <div className="max-w-6xl mx-auto ">
-      <header className="px-4 text-2xl font-bold">IPTV</header>
+      <div className="flex justify-between py-8">
+        <header className="px-4 text-2xl font-bold">IPTV</header>
+        <input
+          type="text"
+          alt="search"
+          className="px-4 bg-gray-100 border rounded-full"
+          placeholder="Search for a channel"
+        />
+      </div>
       <div className="flex flex-wrap justify-between">
         {channels &&
           channels.map((channel) => {
             return (
               <div>
-                <img
-                  className="h-32 p-4 m-2 rounded shadow"
-                  src={channel.inf && (channel.inf.tvgLogo || channel.inf.logo)}
-                  alt={channel.inf && channel.inf.title}
-                />
-                <p className="px-4">{channel.inf && channel.inf.title}</p>
+                <ChannelImage channel={channel} />
+                <p className="px-4p-4">{channel.inf && channel.inf.title}</p>
               </div>
             )
           })}
