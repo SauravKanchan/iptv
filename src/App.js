@@ -11,6 +11,10 @@ const ChannelImage = ({ channel }) => {
   )
 };
 
+function search(event) {
+  console.log(event.target.value);
+}
+
 function App() {
   const [channels, setChannels] = useState([])
   useEffect(() => {
@@ -53,6 +57,7 @@ function App() {
           alt="search"
           className="px-4 bg-gray-100 border rounded-full"
           placeholder="Search for a channel"
+          onChange={search}
         />
       </div>
       <div className="flex flex-wrap justify-between">
