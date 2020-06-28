@@ -12,7 +12,6 @@
     "m3u8-file-parser": "^0.2.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-icons": "^3.10.0",
     "react-player": "^2.4.0",
     "react-scripts": "3.4.1"
   },

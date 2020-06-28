@@ -5,9 +5,10 @@ import m3u8Parser from 'm3u8-file-parser'
 import './App.css'
 import brokenImg from './img/brokenimage.png'
 import fuzzysort from 'fuzzysort';
-import Player from './components/Player'
+import ReactPlayer from "react-player";
 
-  let channels_raw = [];
+
+let channels_raw = [];
 
 
 function App() {
@@ -99,7 +100,7 @@ function App() {
           onChange={search}
         />
       </div>
-      {url && <Player url={url} />}
+      {url && <ReactPlayer playing controls url={url} />}
       <div className="flex flex-wrap justify-between">
         {channels &&
           channels.map((channel) => {
