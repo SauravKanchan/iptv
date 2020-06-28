@@ -7,7 +7,12 @@ import brokenImg from './img/brokenimage.png'
 const ChannelImage = ({ channel }) => {
   const [source, setSource] = useState(channel.inf && channel.inf.tvgLogo)
   return (
-    <img className="h-32 m-2 rounded shadow" src={source} alt="channel-logo" onError={() => setSource(brokenImg)} />
+    <img
+      className="h-32 m-2 rounded shadow max-w-32"
+      src={source}
+      alt="channel-logo"
+      onError={() => setSource(brokenImg)}
+    />
   )
 }
 function App() {
@@ -47,11 +52,14 @@ function App() {
       <div className="flex flex-wrap justify-between">
         {channels &&
           channels.map((channel) => {
-            console.log(channel)
             return (
               <div>
-                <ChannelImage channel={channel} />
-                <p className="px-4p-4">{channel.inf && channel.inf.title}</p>
+                {channel.inf &&
+                  channel.inf.title &&
+                  channel.inf.title.length < 50 && [
+                    <ChannelImage channel={channel} />,
+                    <p className="px-4p-4">{channel.inf && channel.inf.title}</p>,
+                  ]}
               </div>
             )
           })}
