@@ -5,11 +5,12 @@ import './App.css'
 import brokenImg from './img/brokenimage.png'
 
 const ChannelImage = ({ channel }) => {
-  const [source, setSource] = useState(channel.inf && channel.inf.tvgLogo)
+  const [source, setSource] = useState(channel.inf && (channel.inf.tvgLogo || channel.inf.logo));
   return (
     <img className="h-32 m-2 rounded shadow" src={source} alt="channel-logo" onError={() => setSource(brokenImg)} />
   )
-}
+};
+
 function App() {
   const [channels, setChannels] = useState([])
   useEffect(() => {
