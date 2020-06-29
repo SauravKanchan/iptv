@@ -1,11 +1,11 @@
 /* eslint react/prop-types: 0 */
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import m3u8Parser from 'm3u8-file-parser'
 import './App.css'
 import brokenImg from './img/brokenimage.png'
 import fuzzysort from 'fuzzysort';
 import ReactPlayer from "react-player";
+import urls from './m3u8.json';
 
 
 let channels_raw = [];
@@ -64,42 +64,9 @@ function App() {
   
   useEffect(() => {
     const fetchChannels = async () => {
-      let res = await axios.get('https://raw.githubusercontent.com/billacablewala/m3u8/master/README.md')
-      let reader = new m3u8Parser()
-      let urls = res.data
-        .replace(/= "/g, '="')
-        .replace(/EXTINF:0,/g, "EXTINF:0 ")
-        .replace(/EXTINF:-1,/g, "EXTINF:-1 ")
-        .replace(/ttvg-logo/g, "tvg-logo")
-        .replace(/tvg-logo"" ,/g, 'tvg-logo"" ')
-        .replace(/"MOVIES,/g, 'MOVIES"')
-        .replace(/"HINDI""/g, '"HINDI"')
-        .replace(/.jpg /g, '.jpg" ')
-        .replace(/.png"" /g, '.png" ')
-        .replace(/tvg-logo="src=/g, "tvg-logo=")
-        .split("#EXTINF:");
-
-      urls.forEach((url, i) => {
-        try {
-          if (i === 0) {
-            reader.read(url)
-          } else {
-            reader.read('#EXTINF:' + url)
-          }
-        } catch (error) {
-          console.log("Error in parsing: ", "#EXTINF:" + url);
-        }
-      })
-      let parsed = reader.getResult().segments
       
-      parsed.forEach((d) => {
-          let temp = { ...d.inf }
-          temp.url = d.url
-          channels_raw.push(temp);
-      })
-
     
-      setChannels(channels_raw);
+      setChannels(urls);
 
       
     };
