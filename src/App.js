@@ -24,13 +24,22 @@ function App() {
         className="h-32 m-2 rounded shadow max-w-32"
         src={source}
         alt="channel-logo"
-        onClick={() => setUrl(channel.url)}
+        onClick={() => openUrl(channel.url)}
         onError={() => setSource(brokenImg)}
       />
     );
   };
 
+  async function openUrl(url) { 
+    let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) {
+      setUrl(url);
+    } else {
+      window.open(url, "_blank");
+    }
+  
 
+  }
 
   async function search(event) {
     let filtered_channels = [];
@@ -52,11 +61,16 @@ function App() {
       let reader = new m3u8Parser()
       let urls = res.data
         .replace(/= "/g, '="')
-        .replace(/EXTINF:0,/g, 'EXTINF:0 ')
-        .replace(/EXTINF:-1,/g, 'EXTINF:-1 ')
-        .replace(/ttvg-logo/g, 'tvg-logo')
+        .replace(/EXTINF:0,/g, "EXTINF:0 ")
+        .replace(/EXTINF:-1,/g, "EXTINF:-1 ")
+        .replace(/ttvg-logo/g, "tvg-logo")
         .replace(/tvg-logo"" ,/g, 'tvg-logo"" ')
-        .split('#EXTINF:')
+        .replace(/"MOVIES,/g, 'MOVIES"')
+        .replace(/"HINDI""/g, '"HINDI"')
+        .replace(/.jpg /g, '.jpg" ')
+        .replace(/.png"" /g, '.png" ')
+        .replace(/tvg-logo="src=/g, "tvg-logo=")
+        .split("#EXTINF:");
 
       urls.forEach((url, i) => {
         try {
@@ -66,7 +80,7 @@ function App() {
             reader.read('#EXTINF:' + url)
           }
         } catch (error) {
-          console.log('Error in reading url')
+          console.log("Error in parsing: ", "#EXTINF:" + url);
         }
       })
       let parsed = reader.getResult().segments
