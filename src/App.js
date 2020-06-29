@@ -34,6 +34,13 @@ function App() {
     let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile) {
       setUrl(url);
+      window.scrollTo(0, 0);
+      try {
+        await axios.get(url)
+      } catch{
+        setUrl();
+        alert("Falied to load channel");
+      }
     } else {
       window.open(url, "_blank");
     }
