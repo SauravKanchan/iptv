@@ -8,6 +8,15 @@ const api = new axios.create({
 	timeout: TIMEOUT
 });
 
+function inUrl(url, arr) {
+	for (let i = 0; i < arr.length; i++) {
+		if (url.includes(arr[i])) { 
+			return true
+		}	
+	}
+	return false
+}
+
 (async () => {
 	let res = await api.get('https://raw.githubusercontent.com/billacablewala/m3u8/master/README.md');
 	let reader = new m3u8Parser();
@@ -43,6 +52,11 @@ const api = new axios.create({
 	let count = 0;
 
 	parsed.forEach(async (d, index) => {
+		if (inUrl(d.url, ['210.210.155.66','.ts'])) {
+			console.log('skipped', d.url);
+			count++;
+			return;
+		}
 		try {
 			let res = await api.get(d.url);
 			count++;
@@ -51,7 +65,7 @@ const api = new axios.create({
 				temp.url = d.url;
 				channels_raw.push(temp);
 			}
-			if (index % 10 === 0 || count>470) {
+			if (index % 10 === 0 || count > 470) {
 				fs.writeFileSync('src/m3u8.json', JSON.stringify(channels_raw));
 			}
 		} catch (e) {
