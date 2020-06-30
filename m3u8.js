@@ -61,7 +61,7 @@ function inUrl(url, arr) {
 			count++;
 			return;
 		}
-		m3u8_urls.add(d.urls);
+		m3u8_urls.add(d.url);
 		try {
 			let res = await api.get(d.url);
 			count++;
