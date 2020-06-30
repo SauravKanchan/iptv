@@ -11,7 +11,6 @@ import urls from './m3u8.json'
 function App() {
   const [channels, setChannels] = useState([])
   const [url, setUrl] = useState(null)
-  const [searchText, setSearchText] = useState('')
 
   const ChannelImage = ({ channel }) => {
     const [source, setSource] = useState(channel.tvgLogo)
@@ -42,10 +41,10 @@ function App() {
     }
   }
 
-  async function search() {
+  async function search(event) {
     let filtered_channels = []
-    if (searchText) {
-      let result = await fuzzysort.goAsync(searchText, urls, {
+    if (event.target.value) {
+      let result = await fuzzysort.goAsync(event.target.value, urls, {
         limit: 15,
         key: 'title',
         allowTypo: false,
@@ -70,7 +69,6 @@ function App() {
     }
   }, [])
 
-  useEffect(() => search(), [searchText])
   return (
     <div className="max-w-6xl mx-auto ">
       <div className="flex justify-between py-8">
@@ -80,8 +78,7 @@ function App() {
           alt="search"
           className="px-4 bg-gray-100 border rounded-full"
           placeholder="Search for a channel"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={search}
         />
       </div>
       {url && (
@@ -93,7 +90,7 @@ function App() {
           <ReactPlayer playing controls url={url} />{' '}
         </div>
       )}
-      <h1 className="px-2 text-2xl">{searchText ? 'All Channels' : `Showing Results for ${searchText}`}</h1>
+      {/* <h1 className="px-2 text-2xl">{searchText ? 'All Channels' : `Showing Results for ${searchText}`}</h1> */}
       <div className="grid grid-cols-4 md:grid-cols-8">
         {channels &&
           channels.map((channel) => {
