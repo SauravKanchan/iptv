@@ -9,7 +9,13 @@ const LogoPath = {
     "Republic Bharat": "republic.png",
     "DD National": "DDNational.jpeg",
     "DD Sports": "DDSports.png",
-    "B4U Kadak": "B4UKadak.jpeg"
+    "B4U Kadak": "B4UKadak.jpeg",
+    "Twenty Four News": "24News.jpeg",
+    "Mastiii": "masti.jpeg",
+    "ET Now": "ETNow.png",
+    "Disney Junior": "DisneyJunior.png",
+    "HISTORY": "history.jpeg",
+    "ABC News": "abcNews.jpeg"
 }
 
 const BASE_URL = "https://raw.githubusercontent.com/SauravKanchan/iptv/master/logo/"
