@@ -53,12 +53,15 @@ function inUrl(url, arr) {
 
 	let count = 0;
 
+	let m3u8_urls = new Set()
+
 	parsed.forEach(async (d, index) => {
-		if (inUrl(d.url, ['210.210.155.66','.ts'])) {
+		if (inUrl(d.url, ['210.210.155.66','.ts']) || m3u8_urls.has(d.url)) {
 			console.log('skipped', d.url);
 			count++;
 			return;
 		}
+		m3u8_urls.add(d.urls);
 		try {
 			let res = await api.get(d.url);
 			count++;
@@ -68,7 +71,7 @@ function inUrl(url, arr) {
 				temp.tvgLogo = temp.tvgLogo? temp.tvgLogo: temp.logo? temp.logo : ""
 				channels_raw.add(temp);
 			}
-			if (index % 10 === 0 || count > 630) {
+			if (index % 10 === 0 || count > 500) {
 				fs.writeFileSync('src/m3u8.json', JSON.stringify([...channels_raw]));
 			}
 		} catch (e) {
