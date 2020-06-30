@@ -6,6 +6,7 @@ import brokenImg from './img/brokenimage.png';
 import fuzzysort from 'fuzzysort';
 import ReactPlayer from 'react-player';
 import urls from './m3u8.json';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 function App() {
 	const [ channels, setChannels ] = useState([]);
@@ -15,7 +16,7 @@ function App() {
 	const ChannelImage = ({ channel }) => {
 		const [ source, setSource ] = useState(channel.tvgLogo);
 		return (
-			<img
+			<LazyLoadImage
 				className="object-contain w-32 h-32 m-2 rounded shadow"
 				src={source}
 				alt="channel-logo"

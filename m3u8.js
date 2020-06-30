@@ -45,9 +45,11 @@ function inUrl(url, arr) {
 		}
 	});
 
+	reader.read((await api.get("https://iptv-org.github.io/iptv/countries/in.m3u")).data);
+
 	let parsed = reader.getResult().segments;
 
-	let channels_raw = [];
+	let channels_raw = new Set();
 
 	let count = 0;
 
@@ -64,20 +66,19 @@ function inUrl(url, arr) {
 				let temp = { ...d.inf };
 				temp.url = d.url;
 				temp.tvgLogo = temp.tvgLogo? temp.tvgLogo: temp.logo? temp.logo : ""
-				channels_raw.push(temp);
+				channels_raw.add(temp);
 			}
-			if (index % 10 === 0 || count > 470) {
-				fs.writeFileSync('src/m3u8.json', JSON.stringify(channels_raw));
+			if (index % 10 === 0 || count > 630) {
+				fs.writeFileSync('src/m3u8.json', JSON.stringify([...channels_raw]));
 			}
 		} catch (e) {
 			count++;
 		}
 		console.log(
 
-			`Completed/Total: ${count}/${parsed.length}. Valid/Invalid: ${channels_raw.length}/${count -
-				channels_raw.length}`
+			`Completed/Total: ${count}/${parsed.length}. Valid: ${channels_raw.size}`
 		);
 	});
 
-	fs.writeFileSync('src/m3u8.json', JSON.stringify(channels_raw));
+	fs.writeFileSync('src/m3u8.json', JSON.stringify([...channels_raw]));
 })();
