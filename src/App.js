@@ -7,6 +7,7 @@ import fuzzysort from 'fuzzysort'
 import ReactPlayer from 'react-player'
 import urls from './m3u8.json'
 
+
 function App() {
   const [channels, setChannels] = useState([])
   const [url, setUrl] = useState(null)

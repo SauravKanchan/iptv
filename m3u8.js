@@ -63,6 +63,7 @@ function inUrl(url, arr) {
 			if (res.status === 200) {
 				let temp = { ...d.inf };
 				temp.url = d.url;
+				temp.tvgLogo = temp.tvgLogo? temp.tvgLogo: temp.logo? temp.logo : ""
 				channels_raw.push(temp);
 			}
 			if (index % 10 === 0 || count > 470) {
@@ -72,6 +73,7 @@ function inUrl(url, arr) {
 			count++;
 		}
 		console.log(
+
 			`Completed/Total: ${count}/${parsed.length}. Valid/Invalid: ${channels_raw.length}/${count -
 				channels_raw.length}`
 		);
