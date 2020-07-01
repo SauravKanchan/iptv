@@ -80,11 +80,16 @@ function updateLink() {
 			if (d.url.includes('https://raw.githubusercontent.com')) {
 				let parser = new m3u8Parser();
 				parser.read(res.data);
-				parser.getResult().segments.forEach((child) => {
+				parser.getResult().segments.forEach(async(child) => {
 					console.log('Add content from ', d.url, 'to',child.url);
+					m3u8_urls.add(child.url);
 					let temp = { ...d.inf };
 					temp.url = child.url;
-					channels_raw.add({ ...temp });
+					let child_res = await api.get(child.url);
+					if (child_res.status === 200) {
+						channels_raw.add({ ...temp });		
+					}
+					console.log('Parent:  ', d.url, 'Child: ',child.url);
 				});
 			} else if (res.status === 200) {
 				let temp = { ...d.inf };
