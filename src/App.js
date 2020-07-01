@@ -50,7 +50,9 @@ function App() {
         await axios.get(url)
       } catch (e) {
         setUrl()
-        alert('Falied to load channel')
+        alert(
+          'Falied to load channel. It can be due to CORS error we highly recommend you to open this site on your mobile'
+        )
       }
     } else {
       window.open(url, '_blank')
@@ -107,12 +109,13 @@ function App() {
           {url && (
             <div className="flex justify-between px-16 py-8 mx-2 my-8 bg-gray-100 shadow-md">
               <div className="flex flex-col justify-center">
-                <h1 className="hidden px-4 py-8 text-4xl font-bold md:block">{selectedChannel.title}</h1>
                 <img
                   src={selectedChannel.tvgLogo}
                   alt=""
-                  className="block object-contain w-12 h-12 px-4 mx-4 bg-white rounded md:w-20 md:h-20"
+                  className="block object-contain w-12 h-12 px-4 mx-4 my-2 mt-8 bg-white rounded md:w-20 md:h-20"
                 />
+                <h3 className="px-4 mt-2 font-bold tracking-tighter text-gray-700">CHANNEL</h3>
+                <h1 className="hidden px-4 text-4xl font-bold md:block">{selectedChannel.title}</h1>
               </div>
               <ReactPlayer playing controls url={url} />{' '}
             </div>
