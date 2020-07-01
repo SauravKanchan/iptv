@@ -1,22 +1,9 @@
 const channels = require('./src/m3u8.json')
 const fs = require('fs')
+const LogoPath = require('./LogoPath.json');
 
 const channelsWithLogo = []
 
-const LogoPath = {
-    "Star Plus": "StarPlus.jpeg",
-    "Newsmax": "NewsMax.jpeg",
-    "Republic Bharat": "republic.png",
-    "DD National": "DDNational.jpeg",
-    "DD Sports": "DDSports.png",
-    "B4U Kadak": "B4UKadak.jpeg",
-    "Twenty Four News": "24News.jpeg",
-    "Mastiii": "masti.jpeg",
-    "ET Now": "ETNow.png",
-    "Disney Junior": "DisneyJunior.png",
-    "HISTORY": "history.jpeg",
-    "ABC News": "abcNews.jpeg"
-}
 
 const BASE_URL = "https://raw.githubusercontent.com/SauravKanchan/iptv/master/logo/"
 channels.forEach(d => { 
@@ -26,4 +13,4 @@ channels.forEach(d => {
     channelsWithLogo.push(d)
 })
 
-fs.writeFileSync("src/m3u8.json", JSON.stringify(channelsWithLogo))
+fs.writeFileSync("src/m3u8.json", JSON.stringify(channelsWithLogo, null, 4))

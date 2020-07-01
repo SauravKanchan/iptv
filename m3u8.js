@@ -1,6 +1,7 @@
 const axios = require('axios');
 const m3u8Parser = require('m3u8-file-parser');
 const fs = require('fs');
+const LogoPath = require('./LogoPath.json');
 
 const TIMEOUT = 200000;
 
@@ -10,11 +11,24 @@ const api = new axios.create({
 
 function inUrl(url, arr) {
 	for (let i = 0; i < arr.length; i++) {
-		if (url.includes(arr[i])) { 
-			return true
-		}	
+		if (url.includes(arr[i])) {
+			return true;
+		}
 	}
-	return false
+	return false;
+}
+
+let channels_raw = new Set();
+
+let count = 0;
+
+
+const BASE_URL = 'https://raw.githubusercontent.com/SauravKanchan/iptv/master/logo/';
+
+let m3u8_urls = new Set();
+
+function updateLink() { 
+	fs.writeFileSync('src/m3u8.json', JSON.stringify([ ...channels_raw ], null, 4));
 }
 
 (async () => {
@@ -45,19 +59,12 @@ function inUrl(url, arr) {
 		}
 	});
 
-	reader.read((await api.get("https://iptv-org.github.io/iptv/countries/in.m3u")).data);
-
+	reader.read((await api.get('https://iptv-org.github.io/iptv/countries/in.m3u')).data);
 
 	let parsed = reader.getResult().segments;
 
-	let channels_raw = new Set();
-
-	let count = 0;
-
-	let m3u8_urls = new Set()
-
 	parsed.forEach(async (d, index) => {
-		if (inUrl(d.url, ['210.210.155.66','.ts']) || m3u8_urls.has(d.url)) {
+		if (inUrl(d.url, [ '210.210.155.66', '.ts' ]) || m3u8_urls.has(d.url)) {
 			console.log('skipped', d.url);
 			count++;
 			return;
@@ -66,32 +73,32 @@ function inUrl(url, arr) {
 		try {
 			let res = await api.get(d.url);
 			count++;
-			if (d.url.includes("https://raw.githubusercontent.com")) {
-				let parser = new m3u8Parser()
+			if (Object.keys(LogoPath).includes(d.inf.title ? d.inf.title : '')) {
+				d.inf.tvgLogo = BASE_URL + LogoPath[d.inf.title];
+				console.log("Add local logo to ", d.inf.title)
+			}
+			if (d.url.includes('https://raw.githubusercontent.com')) {
+				let parser = new m3u8Parser();
 				parser.read(res.data);
-				parser.getResult().segments.forEach(child => {
-					console.log("Adding content from child", { ...d })
-					let temp = { ...d.inf }
-					temp.url = child.url
-					channels_raw.add({...temp})
-				})
-			}else if (res.status === 200) {
+				parser.getResult().segments.forEach((child) => {
+					console.log('Add content from ', d.url, 'to',child.url);
+					let temp = { ...d.inf };
+					temp.url = child.url;
+					channels_raw.add({ ...temp });
+				});
+			} else if (res.status === 200) {
 				let temp = { ...d.inf };
 				temp.url = d.url;
-				temp.tvgLogo = temp.tvgLogo? temp.tvgLogo: temp.logo? temp.logo : ""
+				temp.tvgLogo = temp.tvgLogo ? temp.tvgLogo : temp.logo ? temp.logo : '';
 				channels_raw.add(temp);
 			}
 			if (index % 10 === 0 || count > 500) {
-				fs.writeFileSync('src/m3u8.json', JSON.stringify([...channels_raw]));
+				updateLink()
 			}
 		} catch (e) {
 			count++;
 		}
-		console.log(
-
-			`Completed/Total: ${count}/${parsed.length}. Valid: ${channels_raw.size}`
-		);
+		console.log(`Completed/Total: ${count}/${parsed.length}. Valid: ${channels_raw.size}`);
 	});
 
-	fs.writeFileSync('src/m3u8.json', JSON.stringify([...channels_raw]));
 })();
