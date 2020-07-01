@@ -6,7 +6,8 @@ const channelsWithLogo = []
 
 
 const BASE_URL = "https://raw.githubusercontent.com/SauravKanchan/iptv/master/logo/"
-channels.forEach(d => { 
+channels.forEach(d => {
+    d.title = d.title.replace('CNBC ?????', 'CNBC Awaaz');
     if (Object.keys(LogoPath).includes(d.title? d.title: "")) { 
         d.tvgLogo = BASE_URL+LogoPath[d.title]
     }
