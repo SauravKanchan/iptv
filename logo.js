@@ -14,4 +14,4 @@ channels.forEach(d => {
     channelsWithLogo.push(d)
 })
 
-fs.writeFileSync("src/m3u8.json", JSON.stringify(channelsWithLogo, null, 4))
+fs.writeFileSync("src/m3u8.json", JSON.stringify(channelsWithLogo, null, "\t"))

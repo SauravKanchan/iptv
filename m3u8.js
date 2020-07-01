@@ -27,7 +27,7 @@ const BASE_URL = 'https://raw.githubusercontent.com/SauravKanchan/iptv/master/lo
 let m3u8_urls = new Set();
 
 function updateLink() {
-	fs.writeFileSync('src/m3u8.json', JSON.stringify([ ...channels_raw ], null, 4));
+	fs.writeFileSync('src/m3u8.json', JSON.stringify([ ...channels_raw ], null, "\t"));
 }
 
 async function addChannel(channel) {
