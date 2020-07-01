@@ -22,13 +22,37 @@ let channels_raw = new Set();
 
 let count = 0;
 
-
 const BASE_URL = 'https://raw.githubusercontent.com/SauravKanchan/iptv/master/logo/';
 
 let m3u8_urls = new Set();
 
-function updateLink() { 
+function updateLink() {
 	fs.writeFileSync('src/m3u8.json', JSON.stringify([ ...channels_raw ], null, 4));
+}
+
+async function addChannel(channel) {
+	if (inUrl(channel.url, [ '210.210.155.66', '.ts' ]) || m3u8_urls.has(channel.url)) {
+		console.log('skipped', channel.url);
+		count++;
+		return;
+	}
+
+	if (Object.keys(LogoPath).includes(channel.title ? channel.title : '')) {
+		channel.tvgLogo = BASE_URL + LogoPath[channel.title];
+		console.log('Add local logo to ', channel.title);
+	}
+
+	let res = {};
+	try {
+		res = await api.get(channel.url);
+	} catch (e) {
+		console.log('Error loading: ', channel.url);
+		res = { status: 403 };
+	}
+	if (res.status === 200) {
+		channels_raw.add({ ...channel });
+	}
+	m3u8_urls.add(channel.url);
 }
 
 (async () => {
@@ -64,46 +88,25 @@ function updateLink() {
 	let parsed = reader.getResult().segments;
 
 	parsed.forEach(async (d, index) => {
-		if (inUrl(d.url, [ '210.210.155.66', '.ts' ]) || m3u8_urls.has(d.url)) {
-			console.log('skipped', d.url);
-			count++;
-			return;
-		}
-		m3u8_urls.add(d.url);
-		try {
+		if (d.url.includes('https://raw.githubusercontent.com')) {
 			let res = await api.get(d.url);
-			count++;
-			if (Object.keys(LogoPath).includes(d.inf.title ? d.inf.title : '')) {
-				d.inf.tvgLogo = BASE_URL + LogoPath[d.inf.title];
-				console.log("Add local logo to ", d.inf.title)
-			}
-			if (d.url.includes('https://raw.githubusercontent.com')) {
-				let parser = new m3u8Parser();
-				parser.read(res.data);
-				parser.getResult().segments.forEach(async(child) => {
-					console.log('Add content from ', d.url, 'to',child.url);
-					m3u8_urls.add(child.url);
-					let temp = { ...d.inf };
-					temp.url = child.url;
-					let child_res = await api.get(child.url);
-					if (child_res.status === 200) {
-						channels_raw.add({ ...temp });		
-					}
-					console.log('Parent:  ', d.url, 'Child: ',child.url);
-				});
-			} else if (res.status === 200) {
+			let parser = new m3u8Parser();
+			parser.read(res.data);
+
+			parser.getResult().segments.forEach(async (child) => {
 				let temp = { ...d.inf };
-				temp.url = d.url;
-				temp.tvgLogo = temp.tvgLogo ? temp.tvgLogo : temp.logo ? temp.logo : '';
-				channels_raw.add(temp);
-			}
-			if (index % 10 === 0 || count > 500) {
-				updateLink()
-			}
-		} catch (e) {
-			count++;
+				temp.url = child.url;
+				await addChannel(temp);
+				console.log('Parent:  ', d.url, 'Child: ', child.url);
+			});
+		} else {
+			let temp = { ...d.inf };
+			temp.url = d.url;
+			temp.tvgLogo = temp.tvgLogo ? temp.tvgLogo : temp.logo ? temp.logo : '';
+			await addChannel(temp);
 		}
+		updateLink();
+		count++;
 		console.log(`Completed/Total: ${count}/${parsed.length}. Valid: ${channels_raw.size}`);
 	});
-
 })();
