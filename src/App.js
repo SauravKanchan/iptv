@@ -139,8 +139,7 @@ function App() {
       </div>
       <footer className="w-full p-8 mt-8 text-center bg-blue-700 shadow">
         <div className="max-w-6xl mx-auto text-white">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, consectetur obcaecati, maiores cum nemo quasi
-          veniam veritatis ullam voluptatum vel sit esse similique distinctio, officiis autem iusto tempora iste magni.
+          We do not host any content ourselves. The content you see comes from various publicly available resources, for a full list checkout our <a href="https://github.com/SauravKanchan/iptv/" target="_blank">Github repository</a>.
         </div>
       </footer>
     </div>
