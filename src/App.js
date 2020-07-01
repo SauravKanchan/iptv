@@ -75,7 +75,7 @@ function App() {
 	return (
 		<div className="max-w-6xl mx-auto ">
 			<div className="flex justify-between py-8">
-				<header className="sticky top-0 px-4 text-2xl font-bold">IPTV</header>
+				<header className="sticky top-0 px-4 text-2xl font-bold">OPEN TV</header>
 				<input
 					type="text"
 					alt="search"
