@@ -47,6 +47,7 @@ function inUrl(url, arr) {
 
 	reader.read((await api.get("https://iptv-org.github.io/iptv/countries/in.m3u")).data);
 
+
 	let parsed = reader.getResult().segments;
 
 	let channels_raw = new Set();
@@ -65,7 +66,16 @@ function inUrl(url, arr) {
 		try {
 			let res = await api.get(d.url);
 			count++;
-			if (res.status === 200) {
+			if (d.url.includes("https://raw.githubusercontent.com")) {
+				let parser = new m3u8Parser()
+				parser.read(res.data);
+				parser.getResult().segments.forEach(child => {
+					console.log("Adding content from child", { ...d })
+					let temp = { ...d.inf }
+					temp.url = child.url
+					channels_raw.add({...temp})
+				})
+			}else if (res.status === 200) {
 				let temp = { ...d.inf };
 				temp.url = d.url;
 				temp.tvgLogo = temp.tvgLogo? temp.tvgLogo: temp.logo? temp.logo : ""
