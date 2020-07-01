@@ -37,7 +37,7 @@ function App() {
 				await axios.get(url);
 			} catch (e) {
 				setUrl();
-				alert('Falied to load channel');
+				alert('Falied to load channel. It can be due to CORS error we highly recommend you to open this site on your mobile');
 			}
 		} else {
 			window.open(url, '_blank');
